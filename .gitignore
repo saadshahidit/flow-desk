@@ -1,0 +1,21 @@
+.studio/
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment
+.env
+*.env
+
+# Build
+dist/
+.angular/
+
+# IDE / Editor
+.vscode/
+.editorconfig
+
+# OS
+.DS_Store
+Thumbs.db

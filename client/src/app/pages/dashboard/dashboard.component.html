@@ -1,0 +1,93 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+  <!-- Header -->
+  <div class="mb-6 sm:mb-8">
+    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">
+      {{ auth.isAdmin() ? 'Admin Dashboard' : 'My Dashboard' }}
+    </h1>
+    <p class="text-sm text-gray-500 mt-1">Welcome back, {{ auth.user()?.name }}</p>
+  </div>
+
+  <!-- Stats -->
+  @if (auth.isAdmin()) {
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
+      @for (s of statusStats(); track s.label) {
+        <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
+          <div class="text-2xl font-bold text-gray-900">{{ s.count }}</div>
+          <div class="text-xs text-gray-500 mt-1">{{ s.label }}</div>
+        </div>
+      }
+    </div>
+  } @else {
+    <!-- Member stats -->
+    <div class="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
+      <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
+        <div class="text-2xl font-bold text-gray-900">{{ tasks().length }}</div>
+        <div class="text-xs text-gray-500 mt-1">Assigned Tasks</div>
+      </div>
+      <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
+        <div class="text-2xl font-bold text-green-600">{{ doneTasks() }}</div>
+        <div class="text-xs text-gray-500 mt-1">Completed</div>
+      </div>
+    </div>
+  }
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Recent Tasks -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-xl border border-gray-200">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+          <h2 class="font-semibold text-gray-900">{{ auth.isAdmin() ? 'Recent Tasks' : 'My Tasks' }}</h2>
+          <a routerLink="/tasks" class="text-sm text-indigo-600 hover:underline">View all</a>
+        </div>
+        <div class="divide-y divide-gray-50">
+          @for (task of recentTasks(); track task._id) {
+            <div class="px-5 py-4 hover:bg-gray-50 transition-colors">
+              <a [routerLink]="['/tasks', task._id]" class="block">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">{{ task.title }}</p>
+                    @if (task.assignedTo) {
+                      <p class="text-xs text-gray-400 mt-0.5">{{ task.assignedTo.name }}</p>
+                    }
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0">
+                    <app-badge [label]="task.priority" variant="priority" [value]="task.priority"></app-badge>
+                    <app-badge [label]="task.status" variant="status" [value]="task.status"></app-badge>
+                  </div>
+                </div>
+              </a>
+            </div>
+          } @empty {
+            <div class="px-5 py-8 text-center text-sm text-gray-400">No tasks yet</div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Workload / Info -->
+    @if (auth.isAdmin()) {
+      <div>
+        <div class="bg-white rounded-xl border border-gray-200">
+          <div class="px-5 py-4 border-b border-gray-100">
+            <h2 class="font-semibold text-gray-900">Team Workload</h2>
+          </div>
+          <div class="divide-y divide-gray-50">
+            @for (m of memberWorkload(); track m._id) {
+              <div class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <app-avatar [name]="m.name" size="sm"></app-avatar>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900">{{ m.name }}</p>
+                    <p class="text-xs text-gray-400">{{ m.taskCount }} task{{ m.taskCount !== 1 ? 's' : '' }}</p>
+                  </div>
+                </div>
+              </div>
+            } @empty {
+              <div class="px-5 py-6 text-center text-sm text-gray-400">No members yet</div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

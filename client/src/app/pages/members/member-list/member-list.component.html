@@ -1,0 +1,79 @@
+<div class="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+  <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-6">Team Members</h1>
+
+  <!-- Desktop Table -->
+  <div class="bg-white rounded-xl border border-gray-200 overflow-hidden hidden md:block">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-gray-100 bg-gray-50">
+          <th class="text-left px-5 py-3 font-medium text-gray-600">Member</th>
+          <th class="text-left px-5 py-3 font-medium text-gray-600">Role</th>
+          <th class="text-left px-5 py-3 font-medium text-gray-600">Open Tasks</th>
+          <th class="text-left px-5 py-3 font-medium text-gray-600">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        @for (u of users(); track u._id) {
+          <tr class="hover:bg-gray-50">
+            <td class="px-5 py-4">
+              <div class="flex items-center gap-3">
+                <app-avatar [name]="u.name" size="sm"></app-avatar>
+                <div>
+                  <p class="font-medium text-gray-900">{{ u.name }}</p>
+                  <p class="text-xs text-gray-400">{{ u.email }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-5 py-4">
+              <app-badge [label]="u.role" variant="role" [value]="u.role"></app-badge>
+            </td>
+            <td class="px-5 py-4 text-gray-600">
+              {{ openTaskCount(u._id) }}
+            </td>
+            <td class="px-5 py-4">
+              <div class="flex gap-2">
+                <button (click)="toggleRole(u)"
+                  class="text-xs px-3 py-1.5 border border-gray-200 hover:border-indigo-400 rounded-lg transition-colors">
+                  Make {{ u.role === 'admin' ? 'Member' : 'Admin' }}
+                </button>
+                <button (click)="remove(u)"
+                  class="text-xs px-3 py-1.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+                  Remove
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mobile Cards -->
+  <div class="space-y-3 md:hidden">
+    @for (u of users(); track u._id) {
+      <div class="bg-white rounded-xl border border-gray-200 p-4">
+        <div class="flex items-center gap-3 mb-3">
+          <app-avatar [name]="u.name" size="sm"></app-avatar>
+          <div class="flex-1 min-w-0">
+            <p class="font-medium text-gray-900 text-sm">{{ u.name }}</p>
+            <p class="text-xs text-gray-400 truncate">{{ u.email }}</p>
+          </div>
+          <app-badge [label]="u.role" variant="role" [value]="u.role"></app-badge>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-gray-500">{{ openTaskCount(u._id) }} open task{{ openTaskCount(u._id) !== 1 ? 's' : '' }}</span>
+          <div class="flex gap-2">
+            <button (click)="toggleRole(u)"
+              class="text-xs px-3 py-1.5 border border-gray-200 hover:border-indigo-400 rounded-lg transition-colors">
+              Make {{ u.role === 'admin' ? 'Member' : 'Admin' }}
+            </button>
+            <button (click)="remove(u)"
+              class="text-xs px-3 py-1.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+              Remove
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
